@@ -280,6 +280,6 @@ if __name__ == '__main__':
 
     m2 = Moment(2014, 12, 1, 0, 0)
     m1 = Moment(2014, 11, 1, 0, 0)
-    m2.delta(day=60)
+    m2.delta(day=89)
     print(m2)
     #print(Moment.is_month_valid(12))
