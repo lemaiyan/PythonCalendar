@@ -1,0 +1,74 @@
+import unittest
+from First_Last_P7 import *		# FIX THE NAME
+
+
+#---------------------------------------------#
+# we make a class (extending TestCase class)  #
+# that contains individual methods, each one  #
+# a separate test case we'd like to check.    #
+#---------------------------------------------#
+
+class AllTests (unittest.TestCase):
+	# first test case.
+	def test1(self):
+		"""check that Moment constructor assigns each instance variable correctly."""
+		
+		# create a Moment object
+		m = Moment(2014,12,12,7,30)
+		
+		# normally we want as few assertions per test case as we can manage,
+		# because once the first assertion fails, we won't get to see the
+		# rest of the assertions within this particular test case even be
+		# checked. But these five checks feel related enough that it's worth
+		# grouping together. It's just an organizational choice.
+		self.assertEqual ( m.year   , 2014)
+		self.assertEqual ( m.month  ,   12)
+		self.assertEqual ( m.day    ,   12)
+		self.assertEqual ( m.hour   ,    7)
+		self.assertEqual ( m.minute ,   30)
+		
+		
+	# second test case.
+	def test2(self):
+		"""check Moment's .before() definition (decided by year)"""
+		m1 = Moment (2013,  5, 10, 5, 25)
+		m2 = Moment (2014, 12, 12, 7, 30)
+		self.assertTrue(m1.before(m2))
+		# we could also do this, but it belongs in a separate test case.
+		# self.assertTrue(m2.after(m1))
+	
+	# keep adding more tests cases, naming them
+	# as testX (next number for X), so that the
+	# testsuite-building code below will do the
+	# rest of the setup work for you.
+
+#---------------------------------------------#
+# we have to manually turn those methods into #
+# formal test cases, grouped as a TestSuite.  #
+#---------------------------------------------#
+
+# some ugly code that counts how many testX 
+# functions you've added, automatically.
+num_tests = len(list(AllTests.__dict__)) - 2
+
+class TheTestSuite (unittest.TestSuite):
+	# constructor.
+	def __init__(self):
+		# collect a sequence of tests in a list.
+		fs = []
+		fs.extend(map(lambda n: AllTests("test"+str(n)),range(1,num_tests+1)))
+		# call parent class's constructor.
+		unittest.TestSuite.__init__(self,fs)
+
+#---------------------------------------------#
+# finally, we can run the tests all together. #
+#---------------------------------------------#
+
+# create an object that can run tests.
+runner = unittest.TextTestRunner()
+
+# define the suite of tests that should be run.
+suite1 = TheTestSuite()
+
+# let the runner run the suite of tests.
+runner.run(suite1)
