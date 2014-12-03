@@ -145,15 +145,21 @@ class Moment():
 
         #now we deal with the months
         carry_over_years = (self.month + month + carry_over_months) / 12
-        new_month = (self.month + month + carry_over_months) % 12
+        if (self.month + month + carry_over_months) % 12 == 0:
+            new_month = 12
+        else:
+            new_month = (self.month + month + carry_over_months) % 12
 
         # dealing with years
         new_year = self.year + carry_over_years + year
-        self.year = new_year
-        self.month = new_month
-        self.day = new_day
-        self.hour = new_hours
-        self.minute = new_minutes
+
+        #bringing everything together
+
+        self.year = round(new_year)
+        self.month = round(new_month)
+        self.day = round(new_day)
+        self.hour = round(new_hours)
+        self.minute = round(new_minutes)
 
 
 
@@ -274,6 +280,6 @@ if __name__ == '__main__':
 
     m2 = Moment(2014, 12, 1, 0, 0)
     m1 = Moment(2014, 11, 1, 0, 0)
-    m2.delta(month=12)
+    m2.delta(day=60)
     print(m2)
     #print(Moment.is_month_valid(12))
