@@ -2,6 +2,7 @@ __author__ = '@author'
 
 from PythonCalendar.TimeError import *
 
+
 class Moment():
 
     def __init__(self, year=0, month=0, day=0, hour=0, minute=0):
@@ -31,30 +32,84 @@ class Moment():
         except Exception as e:
             print(e)
 
+    def __str__(self):
+        fmonth = self.month
+        fday = self.day
+        fhour = self.hour
+        fminute = self.minute
+        if self.month < 10:
+            fmonth = "0{0}".format(self.month)
+        if self.day < 10:
+            fday = "0{0}".format(self.day)
+        if self.hour < 10:
+            fhour = "0{0}".format(self.hour)
+        if self.minute < 10:
+            fminute = "0{0}".format(self.minute)
+
+        return "{0}/{1}/{2}-{3}:{4}".format(self.year, fmonth, fday, fhour, fminute)
+
+    def __repr__(self):
+        return "Moment({0}, {1}, {2}, {3}, {4})".format(self.year, self.month, self.day, self.hour, self.minute)
+
     def before(self, other):
         """
         Checks if the Moment is before other
         :param other:
         :return:
         """
-        is_early = False
+
         if self.year < other.year:
-            is_early = True
+
+            return True
         else:
-            if self.month < other.month:
-                is_early = True
+            if self.month < other.month and self.year < other.year:
+
+                return True
             else:
-                if self.day < other.day:
-                    is_early = True
+                if self.day < other.day and (self.month < other.month and self.year < other.year):
+
+                    return True
                 else:
-                    if self.hour < other.hour:
-                        is_early = True
+                    if self.hour < other.hour and (self.day < other.day and self.month < other.month and self.year < other.year):
+
+                        return True
                     else:
-                        if self.minute < other.minute:
-                            is_early = True
+                        if self.minute < other.minute and (self.hour < other.hour and self.day < other.day and self.month < other.month and self.year < other.year):
+
+                            return True
                         else:
-                            is_early = False
-        return is_early
+                            return False
+
+
+    def equal(self, other):
+        """
+        Checks if the two moments are equal
+        :param other:
+        :return:
+        """
+        is_equal = False
+        if self.year == other.year:
+            is_equal = True
+            if self.month == other.month:
+                is_equal = True
+                if self.day == other.day:
+                    is_equal = True
+                    if self.hour == other.hour:
+                        is_equal = True
+                        if self.minute == other.minute:
+                            is_equal = True
+                        else:
+                            is_equal = False
+                    else:
+                        is_equal = False
+                else:
+                    is_equal = False
+            else:
+                is_equal = False
+        else:
+            is_equal = False
+
+        return is_equal
 
     def after(self, other):
         """
@@ -66,16 +121,16 @@ class Moment():
         if self.year > other.year:
             is_early = True
         else:
-            if self.month > other.month:
+            if self.month > other.month and self.year > other.year:
                 is_early = True
             else:
-                if self.day > other.day:
+                if self.day > other.day and (self.month > other.month and self.year > other.year):
                     is_early = True
                 else:
-                    if self.hour > other.hour:
+                    if self.hour > other.hour and (self.day > other.day and self.month > other.month and self.year > other.year):
                         is_early = True
                     else:
-                        if self.minute > other.minute:
+                        if self.minute > other.minute and (self.hour > other.hour and self.day > other.day and self.month > other.month and self.year > other.year):
                             is_early = True
                         else:
                             is_early = False
@@ -93,29 +148,28 @@ class Moment():
         """
 
         # first check if the deal with the minutes
-        carry_over_hours = (self.minute + minute) / 60
+        carry_over_hours = int((self.minute + minute) / 60)
         new_minutes = (self.minute + minute) % 60
 
         #then deal with the hours
-        carry_over_days = (self.hour + hour + carry_over_hours) / 24
+        carry_over_days = int((self.hour + hour + carry_over_hours) / 24)
         new_hours = (self.hour + hour + carry_over_hours) % 24
 
         #deal with days
 
-        remaining_days_to_end_of_the_current_month = Moment.get_number_of_days_in_a_month(self.year, self.month)- self.day
+        remaining_days_to_end_of_the_current_month = Moment.get_number_of_days_in_a_month(self.year, self.month)- (self.day + carry_over_days)
 
         #check if the days we have overflow
 
         overflow_days = day - remaining_days_to_end_of_the_current_month
-
         #if the overflow_days are 0 or negative then we good we end there else we loop through the days until they are done
 
         new_month = 0
         carry_over_months = 0
         new_day = 0
-        new_year =0
+        new_year = 0
         if overflow_days <= 0:
-            new_day = self.day + day
+            new_day = self.day + day + carry_over_days
             new_month = self.month
             carry_over_months = 0
             overflow_days = 0
@@ -124,7 +178,6 @@ class Moment():
             new_month = self.month + 1
             new_year = self.year
             while overflow_days > 0:
-                print("start days %d" % overflow_days)
                 if new_month == 13:
                     new_month = 1
                     new_year += 1
@@ -144,13 +197,16 @@ class Moment():
                     overflow_days = overflow
 
         #now we deal with the months
-        carry_over_years = (self.month + month + carry_over_months) / 12
+
+        carry_over_years = 0
         if (self.month + month + carry_over_months) % 12 == 0:
             new_month = 12
         else:
             new_month = (self.month + month + carry_over_months) % 12
+            carry_over_years = int((self.month + month + carry_over_months) / 12)
 
         # dealing with years
+
         new_year = self.year + carry_over_years + year
 
         #bringing everything together
@@ -160,16 +216,6 @@ class Moment():
         self.day = round(new_day)
         self.hour = round(new_hours)
         self.minute = round(new_minutes)
-
-
-
-
-
-    def __str__(self):
-        return "{0}/{1}/{2}-{3}:{4}".format(self.year, self.month, self.day, self.hour, self.minute)
-
-    def __repr__(self):
-        return "Moment({0}, {1}, {2}, {3}, {4})".format(self.year, self.month, self.day, self.hour, self.minute)
 
     def is_leap_year(year):
         """
@@ -272,14 +318,4 @@ class Moment():
 
         return days_in_a_month
 
-def _main():
-    print("Hello world")
 
-
-if __name__ == '__main__':
-
-    m2 = Moment(2014, 12, 1, 0, 0)
-    m1 = Moment(2014, 11, 1, 0, 0)
-    m2.delta(day=89)
-    print(m2)
-    #print(Moment.is_month_valid(12))

@@ -3,7 +3,6 @@ __author__ = '@author'
 
 class TimeError(Exception):
 
-
     def __init__(self, msg):
 
         self.msg = msg
