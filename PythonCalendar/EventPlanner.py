@@ -104,10 +104,3 @@ class EventPlanner:
             # make sure the User is not available during that event
             return not self.available_during(event.timespan)
 
-# Here we run a test program
-
-if __name__ == '__main__':
-    # welcome
-    print("Hello User, Welcome to the Python Calendar")
-    input("Select \n1. To add an Event.\n2. To add events\n")
-

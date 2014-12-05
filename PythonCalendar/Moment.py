@@ -71,7 +71,6 @@ class Moment():
                     return True
                 else:
                     if self.hour < other.hour and (self.day < other.day and self.month < other.month and self.year < other.year):
-
                         return True
                     else:
                         if self.minute < other.minute and (self.hour < other.hour and self.day < other.day and self.month < other.month and self.year < other.year):
@@ -79,7 +78,6 @@ class Moment():
                             return True
                         else:
                             return False
-
 
     def equal(self, other):
         """
